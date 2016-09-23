@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_PATH=$PWD nodemon ./bin/www",
+    "start": "NODE_PATH=$PWD node ./bin/www",
     "test": "NODE_PATH=$PWD node node_modules/.bin/mocha"
   },
   "dependencies": {
