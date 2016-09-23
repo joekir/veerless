@@ -1,0 +1,21 @@
+extends layout
+
+
+block content
+  form(name="ClientDetails", method="post", action="/login/final",_csrf=csrf)
+        div.form-group.col-xs-3
+                label.control-label Username    
+                input(type="text",name="username",value=username,readonly).form-control
+        div.form-group.col-xs-3
+                label.control-label Server-Code 
+                input(type="text", name="servercode",id="servercode",value=servercode,readonly,autofocus).form-control
+        div.form-group.col-xs-3
+                label.control-label Client-Code   
+                input(type="text", name="clientcode", autocomplete="off",required).form-control
+        div.form-group.col-xs-3
+                label.control-label Password  
+                input(type="password", name="password",autocomplete="off",required).form-control
+                input(type="hidden", name="_csrf",value=csrf)        
+                input(type="submit", value="Confirm").btn.btn-primary.pull-right
+
+

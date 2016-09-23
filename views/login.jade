@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  form(name="requestServerCode", method="post", action="/login",_csrf=csrf)
+        div.form-group.col-xs-3
+                label.control-label Username    
+                input(type="text", name="username", autocomplete="off",required).form-control
+                input(type="hidden", name="_csrf",value=csrf)        
+                input(type="submit", value="Confirm").btn.btn-primary.pull-right
