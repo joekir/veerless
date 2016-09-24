@@ -1,5 +1,6 @@
 const crypto = require('crypto'),
     os = require('os'),
+    dns = require('dns'),
     process = require('process');
 
 const db = require(process.env.NODE_PATH + '/src/db/db'),
@@ -61,7 +62,7 @@ var longFromIP = function() {
             addr = match.address
     }
 
-    console.log(netInfs);
+    console.log(dns.resolve4('veerless.herokuapp.com', (err,addrs) => { console.log(addrs); }))
     console.log("local IP address set as : " + addr);
 
     // IP to long
