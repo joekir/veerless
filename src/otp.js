@@ -48,7 +48,6 @@ var generateTOTP = function(otpkey, t0, ipAddress) {
 
 
 var longFromIP = function() {
-
     return dns.resolve4(config.hostname, (err,addrs) => {
         if(err){
             throw err;
