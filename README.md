@@ -10,7 +10,7 @@ It's called **Veerless**, as it doesn't let you veer off course from the genuine
 ### How to try it out
 
 1. Download the code from [https://github.com/joekir/veerless](https://github.com/joekir/veerless) follow the setup steps below.
-2. Review the code in the chrome-extension, and if you're ok with its intent then install that.
+2. Review the code in the chrome-extension, and if you agree its non-harmful then install that. ([help on how to do that](https://developer.chrome.com/extensions/getstarted#unpacked))
 3. Navigate to [https://veerless.herokuapp.com/register](https://veerless.herokuapp.com/register). The available users to choose from are:             
 `{username:"user1", password:"foobar"}`       
 `{username:"user2", password:"password1"}`            

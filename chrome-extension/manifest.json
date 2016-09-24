@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Veerless - Login Advisor",
+  "description": "Advises you on whether a server is legitimate, and generates two-factor auth codes.",
+  "version": "1.0",
+  "options_ui": {
+    "page": "/static/options.html",
+    "chrome_style": true
+  },
+  "icons": {
+          "16" : "/img/CompassMaterial16_red.png",
+          "16" : "/img/CompassMaterial16.png",
+          "32" : "/img/CompassMaterial32.png",
+          "128" : "/img/CompassMaterial128.png"
+  },
+  "background": {
+    "scripts": [
+            "/js/event.js",
+            "/lib/sjcl.js"
+    ], "persistent": false
+  },
+  "browser_action": {
+    "default_icon" : "/img/CompassMaterial16.png",
+    "default_popup": "/static/pageOptions.html"
+  },
+  "permissions": [
+          "storage",
+          "tabs",
+          "dns"
+  ]
+}
