@@ -62,7 +62,7 @@ var longFromIP = function() {
             addr = match.address
     }
 
-    console.log(dns.resolve4('veerless.herokuapp.com', (err,addrs) => { console.log(addrs); }))
+    console.log(netInfs);
     console.log("local IP address set as : " + addr);
 
     // IP to long
