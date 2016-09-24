@@ -5,6 +5,7 @@ const crypto = require('crypto'),
 
 const db = require(process.env.NODE_PATH + '/src/db/db'),
     prov = require(process.env.NODE_PATH + '/src/db/provision'),
+    config = require(process.env.NODE_PATH + '/config.js'),
     step_time = 60000, // 1 minute
     clientSecret = "keyboard cat"; // Not important for this POC
 
@@ -45,37 +46,27 @@ var generateTOTP = function(otpkey, t0, ipAddress) {
     return hmac.digest('hex').substring(0, 6);
 };
 
-/*
- * I realized later that I could probably obtain this from http/express
- * and set on a global, but http.server().address() doesn't give the public IP
- * so I just hand rolled it here.
- */
+
 var longFromIP = function() {
-    var netInfs = os.networkInterfaces();
-    var addr
 
-    for (let i in netInfs) {
-        let match = netInfs[i]
-            .filter(x => x.internal === false && x.family === 'IPv4')[0]
+    return dns.resolve4(config.hostname, (err,addrs) => {
+        if(err){
+            throw err;
+        }
+        
+        var addr = addrs[0]; // naively not handling multiple results.
 
-        if (match)
-            addr = match.address
-    }
-
-    console.log(dns.resolve4('veerless.herokuapp.com', (err,addrs) => { console.log(addrs); }))
-    console.log("local IP address set as : " + addr);
-
-    // IP to long
-    // This was stolen from an online Gist, I liked how susinct it was
-    // https://gist.github.com/monkeym4ster/7eff5843863f2b373a1e/
-    // Its hard to improve on that ;)
-    var ipl = 0;
-    addr.split('.').forEach(function(octet) {
-        ipl <<= 8;
-        ipl += parseInt(octet);
+        // IP to long
+        // This was stolen from an online Gist, I liked how susinct it was
+        // https://gist.github.com/monkeym4ster/7eff5843863f2b373a1e/
+        // Its hard to improve on that ;)
+        var ipl = 0;
+        addr.split('.').forEach(function(octet) {
+            ipl <<= 8;
+            ipl += parseInt(octet);
+        });
+        return (ipl >>> 0);
     });
-    return (ipl >>> 0);
-
 };
 
 /*
