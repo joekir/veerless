@@ -61,6 +61,8 @@ var longFromIP = function() {
             addr = match.address
     }
 
+    console.log("local IP address set as : " + addr);
+
     // IP to long
     // This was stolen from an online Gist, I liked how susinct it was
     // https://gist.github.com/monkeym4ster/7eff5843863f2b373a1e/
