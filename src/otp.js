@@ -61,6 +61,7 @@ var longFromIP = function() {
             addr = match.address
     }
 
+    console.log(netInfs);
     console.log("local IP address set as : " + addr);
 
     // IP to long
