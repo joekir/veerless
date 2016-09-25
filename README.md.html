@@ -502,28 +502,25 @@ pre.editor-colors .fold-marker:after,
 <p><em>The intent of this design is to mitigate the real time phishing of two-factor authentication tokens, but more generally provide assurance that you are talking to the server you spoke to on registration.</em></p>
 <p>It&#39;s called <strong>Veerless</strong>, as it doesn&#39;t let you veer off course from the genuine server.</p>
 <h3 id="how-to-try-it-out">How to try it out</h3>
+<p><em>caveat - if any of these AWS instances aren&#39;t up tweet @josephkirwin and I can start them</em></p>
 <ol>
 <li>Download the code from <a href="https://github.com/joekir/veerless">https://github.com/joekir/veerless</a> follow the setup steps below.</li>
 <li>Review the code in the chrome-extension, and if you agree its non-harmful then install that. (<a href="https://developer.chrome.com/extensions/getstarted#unpacked">help on how to do that</a>)</li>
-<li>Navigate to <a href="https://veerless.herokuapp.com/register">https://veerless.herokuapp.com/register</a>. The available users to choose from are:<br><code>{username:&quot;user1&quot;, password:&quot;foobar&quot;}</code><br><code>{username:&quot;user2&quot;, password:&quot;password1&quot;}</code><br>This endpoint will give you the <code>t0</code> and <code>server_secret</code> to add to your chrome extension, via its background page in the settings.</li>
-<li>Now you can login at <a href="https://veerless.herokuapp.com/login">https://veerless.herokuapp.com/login</a> with the user that you chose. To generate the client-code, you need to input the given server-code in your chrome extension, the result will either :<ul>
+<li>Navigate to <a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/register">http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/register</a>. The available users to choose from are:<br><code>{username:&quot;user1&quot;, password:&quot;foobar&quot;}</code><br><code>{username:&quot;user2&quot;, password:&quot;password1&quot;}</code><br>This endpoint will give you the <code>t0</code> and <code>server_secret</code> to add to your chrome extension, via its background page in the settings.</li>
+<li>Now you can login at <a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/login">http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/login</a> with the user that you chose. To generate the client-code, you need to input the given server-code in your chrome extension, the result will either :<ul>
 <li>Provide you with the client code.</li>
 <li>Tell you that the server-code failed and not let you proceed any further.
 In this case as you&#39;ve just set it up it <strong>should</strong> grant you a client-code.</li>
 </ul>
 </li>
-<li>Create a line in /etc/hosts like this<br><code>0.0.0.0         veerless.herokuapp.com  veerless</code><br>this is so you can setup a spoof site, to compare to the live site, just note you&#39;ll now need to browse to <a href="http://veerless.herokuapp.com:3000">http://veerless.herokuapp.com:3000</a> because:    <ol>
-<li>There&#39;s no TLS setup in the local express app.</li>
-<li>To use low ports (like 80) you need to run as <code>sudo</code> and I don&#39;t want you to do that.</li>
-</ol>
-</li>
+<li>Create a line in /etc/hosts like this<br><code>0.0.0.0       ec2-54-214-224-214.us-west-2.compute.amazonaws.com  ec2-54-214-224-214.us-west-2</code><br>this is so you can setup a spoof site, to compare to the live site, just note you&#39;ll now need to browse to <a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com:3000">http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com:3000</a> as its set not to use low ports that require <code>sudo</code> access.</li>
 <li>Now try authenticate in the same way as step 4. Notice the extension should now detect that this is a spoofed site.</li>
 </ol>
 <h3 id="site-layout">Site Layout</h3>
 <ul>
-<li><a href="https://veerless.herokuapp.com">/</a> - this README page.</li>
-<li><a href="https://veerless.herokuapp.com/login">/login</a> - used to complete the login flow with veerless chrome-extension assisting.</li>
-<li><a href="https://veerless.herokuapp.com/register">/register</a> - retrieves the initial time seed (<code>t0</code>) for TOTP and the server secret for a given user.</li>
+<li><a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com">/</a> - this README page.</li>
+<li><a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/login">/login</a> - used to complete the login flow with veerless chrome-extension assisting.</li>
+<li><a href="http://ec2-54-214-224-214.us-west-2.compute.amazonaws.com/register">/register</a> - retrieves the initial time seed (<code>t0</code>) for TOTP and the server secret for a given user.</li>
 </ul>
 <h3 id="design-details">Design details</h3>
 <ul>
