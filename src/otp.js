@@ -15,8 +15,6 @@ function getServerCode(username, done) {
             return done(err, null);
         }
 
-        return done(null, generateTOTP(otpkey, t0, longFromIP()));
-
         longFromIP((err,longIP) => {
                 if(err){
                     return done(err,null);
