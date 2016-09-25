@@ -16,6 +16,13 @@ function getServerCode(username, done) {
         }
 
         return done(null, generateTOTP(otpkey, t0, longFromIP()));
+
+        longFromIP((err,longIP) => {
+                if(err){
+                    return done(err,null);
+                }
+                return done(null,generateTOTP(otpkey,t0,longIP));
+        });
     });
 }
 
@@ -47,10 +54,12 @@ var generateTOTP = function(otpkey, t0, ipAddress) {
 };
 
 
-var longFromIP = function() {
+var longFromIP = function(done) {
+    dns.setServers(config.dnsServers); // openDNS
+
     return dns.resolve4(config.hostname, (err,addrs) => {
         if(err){
-            throw err;
+            return done(err,null);
         }
         
         var addr = addrs[0]; // naively not handling multiple results.
@@ -64,7 +73,8 @@ var longFromIP = function() {
             ipl <<= 8;
             ipl += parseInt(octet);
         });
-        return (ipl >>> 0);
+        var longIP = (ipl >>> 0);
+        return done(null,longIP);
     });
 };
 
