@@ -16,7 +16,7 @@ var fetchServerCode = function(username, done) {
         function(err, row) {
             if (err) {
                 return done(err, null, null);
-            } else if (row[Object.keys(row)[0]] === null) {
+            } else if (row === undefined) {
                 return done(new Error('name not found'), null, null);
             } else {
                 return done(null, row.OTPKEY, row.T0);
@@ -33,7 +33,7 @@ var getPassHash = function(username, done) {
         function(err, row) {
             if (err) {
                 return done(err, null, null);
-            } else if (row[Object.keys(row)[0]] === null) {
+            } else if (row === undefined) {
                 return done(new Error('name not found'), null, null);
             } else {
                 return done(null, row.PASSWORD, row.PSALT);
