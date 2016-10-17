@@ -14,7 +14,7 @@ function checkServerCode() {
       var host = new URL(currentUrl).hostname;
 
       if(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host))
-      sendMessage(serverCode, host);
+        sendMessage(serverCode, host);
       else {
         // Even though we explicitly declare 'dns' in the extension's manifest.json, it seems to not
         // be available in some versions of chrome, yet the install is still successful. So we check again.
