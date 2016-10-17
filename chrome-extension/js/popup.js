@@ -1,24 +1,35 @@
 function checkServerCode() {
-    event.preventDefault();
+  event.preventDefault();
 
-    var serverCode = document.getElementById("servercode").value;
+  var serverCode = document.getElementById("servercode").value;
 
-    chrome.tabs.query({
-        "currentWindow": true,
-        "status": "complete",
-        "active": true,
-        "windowType": "normal"
-    }, tabs => {
-        for (tab in tabs) {
-            var currentUrl = tabs[tab].url;
-            var host = new URL(currentUrl).hostname;
+  chrome.tabs.query({
+    "currentWindow": true,
+    "status": "complete",
+    "active": true,
+    "windowType": "normal"
+  }, tabs => {
+    for (tab in tabs) {
+      var currentUrl = tabs[tab].url;
+      var host = new URL(currentUrl).hostname;
 
-            /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host) ? sendMessage(serverCode, host) :
-                chrome.dns.resolve(host, result => {
-                    sendMessage(serverCode, result.address);
-                });
-        }
-    });
+      if(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host))
+      sendMessage(serverCode, host);
+      else {
+        // Even though we explicitly declare 'dns' in the extension's manifest.json, it seems to not
+        // be available in some versions of chrome, yet the install is still successful. So we check again.
+        chrome.permissions.contains({permissions: ['dns']}, success => {
+          if (!success){
+            alert('There was an issue accessing your chrome.dns API, please enable it to proceed.');
+          } else {
+            chrome.dns.resolve(host, result => {
+              sendMessage(serverCode, result.address);
+            });
+          }
+        });
+      }
+    }
+  });
 }
 
 function sendMessage(serverCode, ipAddress) {
