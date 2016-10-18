@@ -6,3 +6,7 @@ body {
 a {
   color: #00B7FF;
 }
+
+label { display: block; }
+.hint { display: none; color: gray; font-style: italic; }
+input:focus + .hint { display: block; }

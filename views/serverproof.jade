@@ -4,18 +4,40 @@ extends layout
 block content
   form(name="ClientDetails", method="post", action="/login/final",_csrf=csrf)
         div.form-group.col-xs-3
-                label.control-label Username    
+                label.control-label Username
                 input(type="text",name="username",value=username,readonly).form-control
         div.form-group.col-xs-3
-                label.control-label Server-Code 
-                input(type="text", name="servercode",id="servercode",value=servercode,readonly,autofocus).form-control
+                label.control-label Server-Code
+                label
+                  input(type="text", name="servercode",id="servercode",value=servercode,readonly,autofocus).form-control
+                  span(class="hint")
+                    | The server presents:
+                    br
+                    br
+                    | trunc(HMAC(server-secret,time-period|ipaddress))
+                    br
+                    br
+                    | If the plugin cannot verify this, it will not grant the user
+                    | its client TOTP and the user will be protected from
+                    | TOTP and password theft.
         div.form-group.col-xs-3
-                label.control-label Client-Code   
-                input(type="text", name="clientcode", autocomplete="off",required).form-control
+                label.control-label Client-Code
+                label
+                  input(type="text", name="clientcode", autocomplete="off",required).form-control
+                  span(class="hint")
+                    | If the plugin can verify the server's OTP
+                    br
+                    | then the user can input the generated client TOTP:
+                    br
+                    br
+                    | trunc(HMAC(client-secret,time-period|ipaddress))
         div.form-group.col-xs-3
-                label.control-label Password  
-                input(type="password", name="password",autocomplete="off",required).form-control
-                input(type="hidden", name="_csrf",value=csrf)        
+                label.control-label Password
+                label
+                  input(type="password", name="password",autocomplete="off",required).form-control
+                  span(class="hint")
+                    | username: user1, password: foobar
+                    br
+                    | username: user2, password: password1
+                input(type="hidden", name="_csrf",value=csrf)
                 input(type="submit", value="Confirm").btn.btn-primary.pull-right
-
-

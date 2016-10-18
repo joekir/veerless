@@ -3,7 +3,14 @@ extends layout
 block content
   form(name="obtainServerSecret", method="post", action="/register",_csrf=csrf)
         div.form-group.col-xs-3
-          label.control-label Username    
-          input(type="text", name="username",autocomplete="off",required).form-control
-          input(type="hidden", name="_csrf",value=csrf)        
+          label.control-label Username
+            input(type="text", name="username",autofocus,autocomplete="off",required).form-control
+            span(class="hint")
+              | The demo database only has the following users available:
+              br
+              br
+              | username: user1, password: foobar
+              br
+              | username: user2, password: password1
+          input(type="hidden", name="_csrf",value=csrf)
           input(type="submit", value="Confirm").btn.btn-primary.pull-right
