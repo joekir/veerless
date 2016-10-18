@@ -14,7 +14,7 @@ function getClientCode(serverCode, ipAddress){
   if (challenge !== serverCode){
     return null;
   }
-  return generateTOTP(clientSecret,t0);
+  return generateTOTP(clientSecret,t0,'');
 }
 
 /*
@@ -23,7 +23,7 @@ function getClientCode(serverCode, ipAddress){
  */
 var generateTOTP = function(otpkey,t0,ipAddress) {
    var longIP = '';
-   if(ipAddress !== undefined){
+   if(ipAddress !== ''){
        longIP = longFromIP(ipAddress);
    }
 
@@ -53,7 +53,7 @@ var longFromIP = function(ipString){
 chrome.extension.onMessage.addListener(
     function(request, sender, callback) {
         var clientCode = getClientCode(request.serverCode,request.ipAddress);
-      
+
         if (clientCode) {
            return callback(clientCode);
         }

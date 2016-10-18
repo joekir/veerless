@@ -53,13 +53,24 @@ var generateTOTP = function(otpkey, t0, ipAddress) {
 
 
 var longFromIP = function(done) {
-    dns.setServers(config.dnsServers); // openDNS
+    // Just for the local users case.
+    if(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(config.hostname)){
+      var ipl = 0;
+      config.hostname.split('.').forEach(function(octet) {
+          ipl <<= 8;
+          ipl += parseInt(octet);
+      });
+      var longIP = (ipl >>> 0);
+      return done(null,longIP);
+    }
+    else {
+      dns.setServers(config.dnsServers); // openDNS
 
-    return dns.resolve4(config.hostname, (err,addrs) => {
+      return dns.resolve4(config.hostname, (err,addrs) => {
         if(err){
-            return done(err,null);
+          return done(err,null);
         }
-        
+
         var addr = addrs[0]; // naively not handling multiple results.
 
         // IP to long
@@ -68,12 +79,13 @@ var longFromIP = function(done) {
         // Its hard to improve on that ;)
         var ipl = 0;
         addr.split('.').forEach(function(octet) {
-            ipl <<= 8;
-            ipl += parseInt(octet);
+          ipl <<= 8;
+          ipl += parseInt(octet);
         });
         var longIP = (ipl >>> 0);
         return done(null,longIP);
-    });
+      });
+    }
 };
 
 /*

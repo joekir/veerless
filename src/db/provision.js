@@ -40,7 +40,7 @@ fs.access(process.env.NODE_PATH + '/src/db/users.db', fs.constants.F_OK, (err) =
         db.run("CREATE TABLE USERS(ID INT PRIMARY KEY NOT NULL,USERNAME TEXT NOT NULL,PASSWORD TEXT NOT NULL,PSALT TEXT NOT NULL,OTPKEY TEXT,T0 LONG);");
 
         addUser(db, 'user1', 'foobar',
-            addUser.bind(undefined, db, 'user2', 'passsword1',
+            addUser.bind(undefined, db, 'user2', 'password1',
                     dbApi.updateOTPKey.bind(undefined, db, 'user1', genkey(),
                         dbApi.updateOTPKey.bind(undefined, db, 'user2', genkey(),
                                 function() {
