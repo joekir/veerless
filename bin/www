@@ -28,7 +28,7 @@ else if (app.get('env') === 'production') {
     cert: fs.readFileSync('/etc/letsencrypt/live/veerless.josephkirwin.com/cert.pem'),
     ca: fs.readFileSync('/etc/letsencrypt/live/veerless.josephkirwin.com/chain.pem')
   };
-  server = http.createServer(app);
+  server = https.createServer(options,app);
 }
 else 
   throw new Error('environment type not defined!');
