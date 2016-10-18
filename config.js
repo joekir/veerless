@@ -10,6 +10,6 @@ config.dnsServers = ['208.67.222.222','208.67.220.220'];
 
 // Environment setting
 // options ['development','production']
-config.environment = <TO ADD ON DEPLOYMENT>
+config.environment = 'development'; 
 
 module.exports = config;
