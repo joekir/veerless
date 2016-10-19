@@ -1,10 +1,11 @@
 var clientSecret = "keyboard cat";
 var step_time = 60000; // 1 minute
 var serverSecret, t0;
+
 chrome.storage.sync.get(["serverSecret","t0"], items => {
       serverSecret = items.serverSecret;
       t0 = items.t0;
-}); // I blame chrome's addListener not working correctly in async for this horrible HACK
+});
 
 /*
  *   Returns null if the serverCodes didn't match
@@ -67,4 +68,11 @@ chrome.tabs.onActivated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         chrome.browserAction.setIcon({path: '/img/CompassMaterial16.png'})
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+        t0 = changes.t0.newValue;
+        //console.log('t0 changed from %s to %s',changes.t0.oldValue,changes.t0.newValue);
+        serverSecret = changes.serverSecret.newValue;
+        //console.log('serverSecret changed from %s to %s',changes.serverSecret.oldValue,changes.serverSecret.newValue);
 });
