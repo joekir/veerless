@@ -15,7 +15,9 @@ router.get('/', csrfProtection, function(req, res, next) {
 });
 
 router.post('/',csrfProtection, function(req, res, next) {
-  otp.getServerSecret(req.body.username,function(err,serversecret,t0){
+  var name = req.body.username.toLowerCase();
+
+  otp.getServerSecret(name,function(err,serversecret,t0){
        if(err){
          res.render('error',{
            message: 'Error occured fetching serversecret',

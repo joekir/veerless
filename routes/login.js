@@ -17,7 +17,8 @@ router.get('/', csrfProtection, function(req, res, next) {
 });
 
 router.post('/', csrfProtection, function(req, res, next) {
-    otp.getServerCode(req.body.username, function(err, otpkey) {
+    var name = req.body.username.toLowerCase();
+    otp.getServerCode(name, function(err, otpkey) {
         if (err) {
             res.render('error', {
                 message: 'Error occured fetching servercode',
@@ -27,7 +28,7 @@ router.post('/', csrfProtection, function(req, res, next) {
             res.render('serverproof', {
                 title: 'Login - phase2',
                 csrf: req.csrfToken(),
-                username: req.body.username,
+                username: name,
                 servercode: otpkey
             });
         }
@@ -35,17 +36,19 @@ router.post('/', csrfProtection, function(req, res, next) {
 });
 
 router.post('/final', csrfProtection, function(req, res, next) {
-    otp.finalAuthenticate(req.body.username, req.body.servercode,
+    var name = req.body.username.toLowerCase();
+
+    otp.finalAuthenticate(name, req.body.servercode,
         req.body.clientcode, req.body.password, (result) => {
 
         var title = (result) ?
-                'Welcome to Veerless!' 
+                'Welcome to Veerless!'
                 : 'Sorry, we could not verify your credentials.';
 
         res.render('final', {
             'title': title ,
             'csrf': req.csrfToken()
-    });
+        });
     });
 });
 
