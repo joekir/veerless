@@ -16,7 +16,8 @@
   "background": {
     "scripts": [
             "/js/event.js",
-            "/lib/sjcl.js"
+            "/lib/sjcl.js",
+            "/js/headerListener.js"
     ], "persistent": false
   },
   "browser_action": {
@@ -25,6 +26,8 @@
   },
   "permissions": [
           "storage",
+          "declarativeWebRequest",
+          "*://*/*",
           "tabs",
           "dns"
   ]

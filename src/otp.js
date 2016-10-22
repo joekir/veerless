@@ -92,17 +92,8 @@ var longFromIP = function(done) {
  * This must NOT fail fast, every check MUST be evaluated
  * to avoid sidechannel attacks
  */
-var finalAuthenticate = function(username, c_servercode, c_clientcode, c_password,done) {
+var finalAuthenticate = function(username, c_clientcode, c_password,done) {
     var outcome = true;
-
-    getServerCode(username, function(err, res) {
-        if (err) {
-            throw err;
-        }
-
-        if (c_servercode !== res) {
-            outcome = false;
-        }
 
         getServerSecret(username, function(err, otpkey, t0) {
             if (err) {
@@ -132,9 +123,6 @@ var finalAuthenticate = function(username, c_servercode, c_clientcode, c_passwor
             });
 
         });
-
-
-    })
 };
 
 module.exports = {

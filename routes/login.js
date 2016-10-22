@@ -10,6 +10,7 @@ var csrfProtection = csrf({
 })
 
 router.get('/', csrfProtection, function(req, res, next) {
+    res.header('X-Veerless-Init','');
     res.render('login', {
         title: 'Veerless Login',
         csrf: req.csrfToken()
@@ -24,12 +25,13 @@ router.post('/', csrfProtection, function(req, res, next) {
                 message: 'Error occured fetching servercode',
                 error: err
             });
-        } else {
+        }
+        else {
+            res.header('X-Veerless-Response','abcdef');
             res.render('serverproof', {
                 title: 'Login - phase2',
                 csrf: req.csrfToken(),
-                username: name,
-                servercode: otpkey
+                username: name
             });
         }
     });
@@ -38,8 +40,8 @@ router.post('/', csrfProtection, function(req, res, next) {
 router.post('/final', csrfProtection, function(req, res, next) {
     var name = req.body.username.toLowerCase();
 
-    otp.finalAuthenticate(name, req.body.servercode,
-        req.body.clientcode, req.body.password, (result) => {
+    otp.finalAuthenticate(name, req.body.clientcode,
+            req.body.password, (result) => {
 
         var title = (result) ?
                 'Welcome to Veerless!'
