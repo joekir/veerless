@@ -9,10 +9,23 @@
 const stage2 = "Enable Response Rule";
 const issue = "Issue detected";
 const complete = "Done";
-var otp = "abcdeb";
+var otp = '';
 var url = '';
 
+function updateOTP(cb) {
+  getCurrentIP( (err,ip) => {
+    if (err) {
+      alert(err);
+      return;
+    }
+
+    otp = generateTOTP(serverSecret,t0, ip);
+    cb();
+  })
+};
+
 var initRule = {
+  id : "init",
   conditions: [
     new chrome.declarativeWebRequest.RequestMatcher({
       responseHeaders : [{nameEquals: "X-Veerless-Init"}]
@@ -23,48 +36,72 @@ var initRule = {
   ]
 };
 
-var failRule = {
-  conditions: [
-    new chrome.declarativeWebRequest.RequestMatcher({
-      excludeResponseHeaders : [{nameEquals: "X-Veerless-Response", valueEquals: otp }],
-      url : { hostPrefix: url}
-    })
-  ],
-  actions: [
-    new chrome.declarativeWebRequest.SendMessageToExtension({message : issue })
-  ]
-};
+// NOTE - to parameterize these, they must be functions, otherwise the values will not be updated!
 
-var successRule = {
-  conditions: [
-    new chrome.declarativeWebRequest.RequestMatcher({
-      responseHeaders : [{nameEquals: "X-Veerless-Response", valueEquals: otp }],
-      url : { hostPrefix: url}
-    })
-  ],
-  actions: [
-    new chrome.declarativeWebRequest.SendMessageToExtension({message : complete })
-  ]
-};
+function failRule () {
+  return {
+    id : "fail",
+    conditions: [
+      new chrome.declarativeWebRequest.RequestMatcher({
+        "excludeResponseHeaders" : [{ "nameEquals" : "X-Veerless-Response" , "valueEquals": otp }],
+        "url" : { "urlEquals": url},
+        "stages" : ["onHeadersReceived"]
+      })
+    ],
+    actions: [
+      new chrome.declarativeWebRequest.SendMessageToExtension({ message : issue })
+    ]
+  };
+}
+
+function successRule () {
+  return {
+    id : "success",
+    conditions: [
+      new chrome.declarativeWebRequest.RequestMatcher({
+        "responseHeaders" : [{ "nameEquals" : "X-Veerless-Response", "valueEquals": otp }],
+        "url" : { "urlEquals": url},
+        "stages" : ["onHeadersReceived"]
+      })
+    ],
+    actions: [
+      new chrome.declarativeWebRequest.SendMessageToExtension({ message : complete })
+    ]
+  };
+}
+
+// used to stop a ton of dupe rules being set.
+var set = false;
 
 if (!chrome.declarativeWebRequest.onMessage.hasListener()){
   console.log("adding onMessage listener");
 
   chrome.declarativeWebRequest.onMessage.addListener(details => {
-    if ('' === url && details.message === stage2){
+    if (!set && details.url != '' && details.message === stage2 ){
       console.log("%s from [%s]",details.message,details.url);
       //url = (new URL(details.url)).origin
       url = details.url;
-      console.log("initialized url to [%s]",url);
-      chrome.declarativeWebRequest.onRequest.removeRules(["initRule"]);
-      chrome.declarativeWebRequest.onRequest.addRules([successRule,failRule]);
+      console.log("Initialized url to [%s]",url);
+      set = true;
+
+      updateOTP( () => {
+        console.log("otp : %s",otp);
+        chrome.declarativeWebRequest.onRequest.removeRules(["init"], () => {
+          chrome.declarativeWebRequest.onRequest.addRules([successRule(),failRule()], () => {
+            console.log("Now listening for 'X-Veerless-Response'");
+          });
+        })
+      });
     }
     else if (details.url === url && details.message !== stage2){
       console.log("%s from [%s]",details.message, details.url);
-      chrome.declarativeWebRequest.onRequest.removeRules(["successRule", "failRule"]);
-      url = '';
-      chrome.declarativeWebRequest.onRequest.addRules([initRule]);
-      console.log("reset to initRule, url set back to [%s]",url);
+
+      set = false;
+      chrome.declarativeWebRequest.onRequest.removeRules(["success","fail"], () => {
+        chrome.declarativeWebRequest.onRequest.addRules([initRule], () => {
+          console.log("Reset to listen for 'X-Veerless-Init'");
+        });
+      });
     }
     else {/* don't care */}
   });

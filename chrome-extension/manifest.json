@@ -17,6 +17,7 @@
     "scripts": [
             "/js/event.js",
             "/lib/sjcl.js",
+            "/js/utils.js",
             "/js/headerListener.js"
     ], "persistent": false
   },

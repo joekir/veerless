@@ -27,7 +27,7 @@ router.post('/', csrfProtection, function(req, res, next) {
             });
         }
         else {
-            res.header('X-Veerless-Response','abcdef');
+            res.header('X-Veerless-Response', otpkey);
             res.render('serverproof', {
                 title: 'Login - phase2',
                 csrf: req.csrfToken(),
