@@ -1,4 +1,4 @@
-var clientSecret = "keyboard cat";
+var clientSecret = "keyboard cat"; // client secret isn't important in this demo
 var step_time = 60000; // 1 minute
 var serverSecret, t0;
 

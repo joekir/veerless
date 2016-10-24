@@ -1,6 +1,5 @@
 /*
   - Server presents an X-Veerless-Init header to begin the chain
-  - The plugin then injects a X-Veerless-Challenge header with its post request
   - The server responds with a X-Veerless-Response: <server OTP code> for the plugin to verify.
 
   The rule sets here therefore need to be conditional, and reset on failure.
@@ -49,10 +48,13 @@ function failRule () {
       })
     ],
     actions: [
+      new chrome.declarativeWebRequest.CancelRequest(),
       new chrome.declarativeWebRequest.SendMessageToExtension({ message : issue })
     ]
   };
 }
+
+//new chrome.declarativeWebRequest.SendMessageToExtension({ message : issue })
 
 function successRule () {
   return {
@@ -96,6 +98,25 @@ if (!chrome.declarativeWebRequest.onMessage.hasListener()){
     else if (details.url === url && details.message !== stage2){
       console.log("%s from [%s]",details.message, details.url);
 
+      if (details.message === complete){
+        chrome.notifications.create({
+          "type"  : "basic",
+          "iconUrl" : "/img/CompassMaterial32.png",
+          "title" : "Server Verified",
+          "message" : "2FA client code: " + generateTOTP(clientSecret,t0,'')
+        });
+      }
+
+      if (details.message === issue){
+        chrome.notifications.create({
+          "type"  : "basic",
+          "iconUrl" : "/img/CompassMaterial32_red.png",
+          "title" : "Untrusted - Blocked",
+          "message" : "Veerless could not verify this server, it is likely it is untrustworthy. \n\n" +
+                      "Please check that you have entered the correct username."
+        });
+      }
+
       set = false;
       chrome.declarativeWebRequest.onRequest.removeRules(["success","fail"], () => {
         chrome.declarativeWebRequest.onRequest.addRules([initRule], () => {
@@ -107,9 +128,20 @@ if (!chrome.declarativeWebRequest.onMessage.hasListener()){
   });
 }
 
-chrome.declarativeWebRequest.onRequest.getRules(['initRule'], details => {
+chrome.declarativeWebRequest.onRequest.getRules(['init'], details => {
   if(details.length === 0){
     console.log("adding initRule");
     chrome.declarativeWebRequest.onRequest.addRules([initRule]);
   }
+});
+
+/*
+ * Make sure we clean down any remaining rules
+ */
+chrome.management.onUninstalled.addListener(id => {
+  chrome.declarativeWebRequest.onRequest.removeRules();
+});
+
+chrome.management.onDisabled.addListener(info => {
+  chrome.declarativeWebRequest.onRequest.removeRules();
 });
