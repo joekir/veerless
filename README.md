@@ -11,18 +11,20 @@ It's called **Veerless**, as it doesn't let you veer off course from the genuine
 
 1. Download the code from [https://github.com/joekir/veerless](https://github.com/joekir/veerless) follow the setup steps below.
 2. Review the code in the chrome-extension, and if you agree its non-harmful then install that. ([help on how to do that](https://developer.chrome.com/extensions/getstarted#unpacked))
-3. Navigate to [https://veerless.josephkirwin.com/register](https://veerless.josephkirwin.com/register). The available users to choose from are:             
-`{username:"user1", password:"foobar"}`       
-`{username:"user2", password:"password1"}`            
-This endpoint will give you the `t0` and `server_secret` to add to your chrome extension, via the "options" page in the extension's settings.
-4. Now you can login at [https://veerless.josephkirwin.com/login](https://veerless.josephkirwin.com/login) with the user that you chose. To generate the client-code, you need to input the given server-code in your chrome extension, the result will either :
-  - Provide you with the client code.
-  - Tell you that the server-code failed and not let you proceed any further.
-5. Create a line in /etc/hosts like this       
-  `0.0.0.0       veerless.josephkirwin.com  veerless`          
-   this is so you can setup your local spoof site, to compare to the live site.
-6. Now try authenticate in the same way as step 4. Notice the extension should now detect that this is a spoofed site.
+3. Navigate to [https://veerless.josephkirwin.com/register](https://veerless.josephkirwin.com/register). This endpoint will give you the `t0` and `server_secret` to add to your chrome extension, via the "options" page in the extension's settings.
+4. Now you can login at [https://veerless.josephkirwin.com/login](https://veerless.josephkirwin.com/login) with the user that you chose. The extension will be looking for:
+  - X-Veerless-Init header from the server to begin the login transaction
+  - X-Veerless-Response header from the server containing its TOTP variant, that it will verify.    
 
+  If it can successfully verify the header, you shouldn't see any difference to a common 2FA login experience, except that you client TOTP will be provided in a notification. If it cannot successfully verify the header, it will cancel the request, and notify you of this.
+
+### More Fiddling
+You could then try and setup your own local site, attempting to spoof the live demo ; )
+
+- Using the code you downloaded in step 1. With the setup steps below
+- Create a line in /etc/hosts like this (which kindof simulates a dns hijack for you)    
+  `127.0.0.1      veerless.josephkirwin.com      veerless`          
+- Now try authenticate in the same way as step 4. Notice the extension should now detect that this is a spoofed site.
 
 ### Site Layout
 

@@ -108,6 +108,9 @@
 .spell-check-misspelling .region {
   border-bottom: 2px dotted rgba(255, 51, 51, 0.75);
 }
+.spell-check-corrections {
+  width: 25em !important;
+}
 
 pre.editor-colors,
 .host {
@@ -505,15 +508,22 @@ pre.editor-colors .fold-marker:after,
 <ol>
 <li>Download the code from <a href="https://github.com/joekir/veerless">https://github.com/joekir/veerless</a> follow the setup steps below.</li>
 <li>Review the code in the chrome-extension, and if you agree its non-harmful then install that. (<a href="https://developer.chrome.com/extensions/getstarted#unpacked">help on how to do that</a>)</li>
-<li>Navigate to <a href="https://veerless.josephkirwin.com/register">https://veerless.josephkirwin.com/register</a>. The available users to choose from are:<br><code>{username:&quot;user1&quot;, password:&quot;foobar&quot;}</code><br><code>{username:&quot;user2&quot;, password:&quot;password1&quot;}</code><br>This endpoint will give you the <code>t0</code> and <code>server_secret</code> to add to your chrome extension, via the &quot;options&quot; page in the extension&#39;s settings.</li>
-<li>Now you can login at <a href="https://veerless.josephkirwin.com/login">https://veerless.josephkirwin.com/login</a> with the user that you chose. To generate the client-code, you need to input the given server-code in your chrome extension, the result will either :<ul>
-<li>Provide you with the client code.</li>
-<li>Tell you that the server-code failed and not let you proceed any further.</li>
+<li>Navigate to <a href="https://veerless.josephkirwin.com/register">https://veerless.josephkirwin.com/register</a>. This endpoint will give you the <code>t0</code> and <code>server_secret</code> to add to your chrome extension, via the &quot;options&quot; page in the extension&#39;s settings.</li>
+<li><p>Now you can login at <a href="https://veerless.josephkirwin.com/login">https://veerless.josephkirwin.com/login</a> with the user that you chose. The extension will be looking for:</p>
+<ul>
+<li>X-Veerless-Init header from the server to begin the login transaction</li>
+<li>X-Veerless-Response header from the server containing its TOTP variant, that it will verify.    </li>
 </ul>
+<p>If it can successfully verify the header, you shouldn&#39;t see any difference to a common 2FA login experience, except that you client TOTP will be provided in a notification. If it cannot successfully verify the header, it will cancel the request, and notify you of this.</p>
 </li>
-<li>Create a line in /etc/hosts like this<br><code>0.0.0.0       veerless.josephkirwin.com  veerless</code><br>this is so you can setup your local spoof site, to compare to the live site.</li>
-<li>Now try authenticate in the same way as step 4. Notice the extension should now detect that this is a spoofed site.</li>
 </ol>
+<h3 id="more-fiddling">More Fiddling</h3>
+<p>You could then try and setup your own local site, attempting to spoof the live demo ; )</p>
+<ul>
+<li>Using the code you downloaded in step 1. With the setup steps below</li>
+<li>Create a line in /etc/hosts like this (which kindof simulates a dns hijack for you)<br><code>127.0.0.1      veerless.josephkirwin.com      veerless</code>          </li>
+<li>Now try authenticate in the same way as step 4. Notice the extension should now detect that this is a spoofed site.</li>
+</ul>
 <h3 id="site-layout">Site Layout</h3>
 <ul>
 <li><a href="https://veerless.josephkirwin.com">/</a> - this README page.</li>
