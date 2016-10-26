@@ -33,8 +33,14 @@ You could then try and setup your own local site, attempting to spoof the live d
 * [/register](https://veerless.josephkirwin.com/register) - retrieves the initial time seed (`t0`) for TOTP and the server secret for a given user.
 
 ### Design details
+
+- [https://www.josephkirwin.com/2016/10/25/veerless-design-changes/](https://www.josephkirwin.com/2016/10/25/veerless-design-changes/)
 - [https://www.josephkirwin.com/2016/08/05/serverside-otp-part2/](https://www.josephkirwin.com/2016/08/05/serverside-otp-part2/)       
 - [https://www.josephkirwin.com/2016/08/02/serverside-otp-part1/](https://www.josephkirwin.com/2016/08/02/serverside-otp-part1/)
+
+###### Extra
+*This is actually an alternate design to Veerless that doesn't require the client to provide confidentiality of the server secret, only integrity.*
+- [https://www.josephkirwin.com/2016/09/12/server-authentication-with-lamports-scheme/](https://www.josephkirwin.com/2016/09/12/server-authentication-with-lamports-scheme/)      
 
 ### Setup
 
