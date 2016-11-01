@@ -2,7 +2,7 @@ var getCurrentIP = function(callback){
   chrome.tabs.query({
     "active": true
   }, tabs => {
-    var currentUrl = tabs[0].url;
+    var currentUrl = tabs.filter(x => x.status === "loading")[0].url;
     host = new URL(currentUrl).hostname;
 
     if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)) {
