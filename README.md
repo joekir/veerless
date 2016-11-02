@@ -1,5 +1,7 @@
 # Veerless
 
+[![NSP Status](https://nodesecurity.io/orgs/joekir/projects/88a3add0-4b28-471d-b7a6-08877ae5bafd/badge)](https://nodesecurity.io/orgs/joekir/projects/88a3add0-4b28-471d-b7a6-08877ae5bafd)
+
 ![Bounty](/public/images/Bounty.jpg "'Bounty', painting of a replica of the Bounty entering the harbour of Ostend, Belgium; by Yasmina (1949- ), a Belgian painter specialized in marines and depictions of tall ships - Creative Commons Attribution 3.0")
 
 ##### A proof of concept for bi-directional two factor authentication.
