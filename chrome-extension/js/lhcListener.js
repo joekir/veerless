@@ -17,6 +17,32 @@ function genHash(seed,i){
   return seed;
 }
 
+/*
+ * This horrible inline code allows us to dynamically name the listeners
+ * function based on domain. So we can check we check for previous existence
+ * and not introduce race conditions.
+ */
+var namedListener = function(name){
+  return new Function(
+    "return function " + name + `(details){
+      if(lhhIter <= 1){
+        // The site will now reject this
+        return {requestHeaders : details.requestHeaders};
+      }
+
+      var updatedLH = genHash(lhhSecret,lhhIter);
+      //console.log('new LH value:', updatedLH);
+
+      var updatedHeaders = details.requestHeaders.concat({
+        name: 'X-LHH',
+        value: updatedLH
+      });
+      --lhhIter;
+
+      return {requestHeaders: updatedHeaders};
+    }`
+  )();
+};
 
 if(!chrome.webRequest.onHeadersReceived.hasListener()){
   chrome.webRequest.onHeadersReceived.addListener(details => {
@@ -28,24 +54,16 @@ if(!chrome.webRequest.onHeadersReceived.hasListener()){
 
       var temp_url = new URL(details.url);
       var filt_url = temp_url.origin + "/*";
-      console.log("setting lhh for : %s", filt_url);
+      var func_name = temp_url.hostname.replace('.','');
+      // console.log("setting lhh for : %s", filt_url);
+      // console.log("new Listener named [%s] created.", func_name);
 
-      // TODO check for dupe!
-      chrome.webRequest.onBeforeSendHeaders.addListener(details =>{
-        if(lhhIter <= 1)
-          throw "Error iterator needs refreshing!!"
+      // Only allow one listener per domain.
+      if(chrome.webRequest.onBeforeSendHeaders.hasListener(func_name))
+        chrome.webRequest.onBeforeSendHeaders.removeListener(func_name);
 
-        var updatedLH = genHash(lhhSecret,lhhIter);
-        //console.log("new LH value:", updatedLH);
-
-        var updatedHeaders = details.requestHeaders.concat({
-          name: "X-LHH",
-          value: updatedLH
-        });
-        --lhhIter;
-
-        return {requestHeaders: updatedHeaders};
-      }, { urls: [ filt_url ], types : ['main_frame']}, ['blocking','requestHeaders']);
+      chrome.webRequest.onBeforeSendHeaders.addListener(namedListener(func_name)
+        , { urls: [ filt_url ], types : ['main_frame']}, ['blocking','requestHeaders']);
     }
   }, {urls: [ '<all_urls>'], types : ['main_frame']},['responseHeaders']);
 }

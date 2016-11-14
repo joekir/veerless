@@ -23,6 +23,8 @@
             "/js/lhcListener.js"
     ], "persistent": true
   },
+  // To allow dynamically named event listeners this is necessary, sorry :(
+  "content_security_policy" : "script-src 'self' 'unsafe-eval'",
   "browser_action": {
     "default_icon" : "/img/CompassMaterial16.png"
   },
