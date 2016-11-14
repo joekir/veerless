@@ -5,10 +5,13 @@ const express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     helmet = require('helmet'),
-    process = require('process');
+    process = require('process'),
+    config = require('./config.js');
 
-var login = require('./routes/login');
-var register = require('./routes/register');
+var login = require('./routes/login'),
+    register = require('./routes/register'),
+    auth = require('./routes/auth'),
+    lhh = require('./src/lhh');
 
 var app = express();
 
@@ -22,16 +25,18 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser("secret"));
 app.use(helmet());
 
-app.get('/', function(req, res) {
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', lhh.authCheck(false), function(req, res) {
     res.sendFile(path.join(__dirname,'./README.md.html'));
 });
 
 app.use('/login', login);
 app.use('/register', register);
+app.use('/secret', auth);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

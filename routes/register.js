@@ -3,9 +3,14 @@ const express = require('express'),
       csrf = require('csurf'),
       process = require('process');
 
-const otp = require(process.env.NODE_PATH + '/src/otp');
+const otp = require(process.env.NODE_PATH + '/src/otp'),
+      lhh = require(process.env.NODE_PATH + '/src/lhh');
 
 var csrfProtection = csrf({ cookie: true })
+
+// Authentication is not required for these
+// but still need to decrement LHH
+router.use(lhh.authCheck(false));
 
 router.get('/', csrfProtection, function(req, res, next) {
   res.render('register', {

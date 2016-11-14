@@ -11,27 +11,12 @@ process.env.NODE_ENV = config.environment;
 var app = require('../app');
 var debug = require('debug')('veerless:server');
 var http = require('http');
-var https = require('https');
-var port;
-var server;
+var port = config.port;
 
-if (app.get('env') === 'development') {
-  port = '80';
-  app.set('port', port);
-  server = http.createServer(app);
-} 
-else if (app.get('env') === 'production') {
-  port = '443';
-  app.set('port', port);
-  var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/veerless.josephkirwin.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/veerless.josephkirwin.com/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/veerless.josephkirwin.com/chain.pem')
-  };
-  server = https.createServer(options,app);
-}
-else 
-  throw new Error('environment type not defined!');
+app.set('port', port);
+var server = http.createServer(app);
+
+console.log('running node engine version : ' + process.versions.node);
 
 server.listen(port);
 server.on('error', onError);

@@ -17,20 +17,25 @@
     "scripts": [
             "/js/event.js",
             "/lib/sjcl.js",
-            "/js/utils.js",
-            "/js/headerListener.js"
-    ], "persistent": false
+            "/js/nsUtils.js",
+            "/js/listeners.js",
+            "/js/veerlessListener.js",
+            "/js/lhcListener.js"
+    ], "persistent": true
   },
   "browser_action": {
     "default_icon" : "/img/CompassMaterial16.png"
   },
   "permissions": [
           "storage",
-          "declarativeWebRequest",
-          "*://*/*",
           "tabs",
           "management",
           "notifications",
-          "dns"
+          "*://*/*",
+          "dns",
+          "cookies",
+          "webRequest",
+          "declarativeWebRequest",
+          "webRequestBlocking"
   ]
 }

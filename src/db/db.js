@@ -43,8 +43,46 @@ var getPassHash = function(username, done) {
     db.close();
 };
 
+/*
+ * Sets the Lamport Hash based on the iteration count provided.
+ */
+var setLH = function(username, secret, lhash, iter){
+  var db = new sqlite3.Database(process.env.NODE_PATH + '/src/db/users.db');
+  db.run("UPDATE USERS SET LH_SECRET = ?, LH = ?, LH_ITER = ? WHERE USERNAME = ?", secret, lhash, iter, username);
+  db.close();
+}
+
+var updateLH = function(username, lhash, iter){
+  var db = new sqlite3.Database(process.env.NODE_PATH + '/src/db/users.db');
+  db.run("UPDATE USERS SET LH = ?, LH_ITER = ? WHERE USERNAME = ?", lhash, iter, username);
+  db.close();
+}
+
+var getLH = function(username,done){
+  var db = new sqlite3.Database(process.env.NODE_PATH + '/src/db/users.db');
+  db.get("SELECT LH, LH_SECRET, LH_ITER FROM USERS WHERE USERNAME = ?", username,
+      function(err, row) {
+          if (err) {
+              return done(err, null);
+          } else if (row === undefined) {
+              return done(new Error('name not found'), null);
+          } else {
+              return done(null, {
+                "hash"   : row.LH,
+                "secret" : row.LH_SECRET,
+                "iter"   : row.LH_ITER
+              });
+          }
+      }
+  );
+  db.close();
+}
+
 module.exports = {
     fetchServerCode,
     updateOTPKey,
-    getPassHash
+    getPassHash,
+    setLH,
+    updateLH,
+    getLH
 };

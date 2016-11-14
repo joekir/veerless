@@ -100,11 +100,15 @@ if (!chrome.declarativeWebRequest.onMessage.hasListener()){
 
       if (details.message === complete){
         chrome.notifications.create({
-          "type"  : "basic",
-          "iconUrl" : "/img/CompassMaterial32.png",
-          "title" : "Server Verified",
-          "message" : "2FA client code: " + generateTOTP(clientSecret,t0,'')
-        });
+            "type"  : "basic",
+            "iconUrl" : "/img/CompassMaterial32.png",
+            "priority" : 2,
+            "title" : "Server Verified",
+            "message" : "2FA client code: " + generateTOTP(clientSecret,t0,'')
+          }, (id) => {
+            // clears very quickly (5 seconds)
+            setTimeout(() => {chrome.notifications.clear(id);}, 5000);
+          })
       }
 
       if (details.message === issue){
@@ -133,15 +137,4 @@ chrome.declarativeWebRequest.onRequest.getRules(['init'], details => {
     console.log("adding initRule");
     chrome.declarativeWebRequest.onRequest.addRules([initRule]);
   }
-});
-
-/*
- * Make sure we clean down any remaining rules
- */
-chrome.management.onUninstalled.addListener(id => {
-  chrome.declarativeWebRequest.onRequest.removeRules();
-});
-
-chrome.management.onDisabled.addListener(info => {
-  chrome.declarativeWebRequest.onRequest.removeRules();
 });

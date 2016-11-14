@@ -30,6 +30,8 @@ var generateTOTP = function(otpkey,t0,ipAddress) {
 
    var t = Math.floor((Date.now()-t0)/step_time);
    var input = t.toString() + longIP.toString();
+   //DEBUG console.log("input: %s, key: %s", input, otpkey);
+
    var key = sjcl.codec.utf8String.toBits(otpkey);
    var hmac = new sjcl.misc.hmac(key,sjcl.hash.sha256)
    var result = sjcl.codec.hex.fromBits(hmac.mac(input));
@@ -47,7 +49,7 @@ var longFromIP = function(ipString){
         ipl <<=8;
         ipl += parseInt(octet);
    });
-   return (ipl >>>0);
+   return (ipl >>> 0);
 
 };
 
@@ -72,7 +74,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
         t0 = changes.t0.newValue;
-        //console.log('t0 changed from %s to %s',changes.t0.oldValue,changes.t0.newValue);
+        //DEBUG console.log('t0 changed from %s to %s',changes.t0.oldValue,changes.t0.newValue);
         serverSecret = changes.serverSecret.newValue;
-        //console.log('serverSecret changed from %s to %s',changes.serverSecret.oldValue,changes.serverSecret.newValue);
+        //DEBUG console.log('serverSecret changed from %s to %s',changes.serverSecret.oldValue,changes.serverSecret.newValue);
 });

@@ -43,6 +43,7 @@ var generateTOTP = function(otpkey, t0, ipAddress) {
 
     var t = Math.floor((Date.now() - t0) / step_time);
     var input = t.toString() + ipAddress.toString();
+    //DEBUG console.log("input: %s, key: %s",input,otpkey);
     hmac.update(input);
 
     // Super crude truncation alg, a better one should be used in a non POC.
@@ -66,19 +67,18 @@ var longFromIP = function(done) {
     else {
       dns.setServers(config.dnsServers); // openDNS
 
-      return dns.resolve4(config.hostname, (err,addrs) => {
+      // unlike resolve4 this also utilises /etc/hosts file.
+      return dns.lookup(config.hostname, { family: 4 }, (err,addrs,family) => {
         if(err){
           return done(err,null);
         }
-
-        var addr = addrs[0]; // naively not handling multiple results.
 
         // IP to long
         // This was stolen from an online Gist, I liked how susinct it was
         // https://gist.github.com/monkeym4ster/7eff5843863f2b373a1e/
         // Its hard to improve on that ;)
         var ipl = 0;
-        addr.split('.').forEach(function(octet) {
+        addrs.split(".").forEach(function(octet) {
           ipl <<= 8;
           ipl += parseInt(octet);
         });

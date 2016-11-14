@@ -20,7 +20,8 @@ function addUser(db, username, password, next) {
             throw err;
         }
 
-        db.run("INSERT INTO USERS(ID,USERNAME,PASSWORD,PSALT,OTPKEY,T0) VALUES(?,?,?,?,NULL,NULL)", randomInt(1, 65535), username, key.toString('hex'), salt);
+        db.run("INSERT INTO USERS(ID,USERNAME,PASSWORD,PSALT,OTPKEY,T0,LH,LH_ITER,LH_SECRET)"
+                + " VALUES(?,?,?,?,NULL,NULL,NULL,NULL,NULL)", randomInt(1, 65535), username, key.toString('hex'), salt);
         next();
     });
 }
@@ -34,10 +35,10 @@ function genkey() {
 
 fs.access(process.env.NODE_PATH + '/src/db/users.db', fs.constants.F_OK, (err) => {
     if (err) {
-
         var db = new sqlite3.Database(process.env.NODE_PATH + '/src/db/users.db');
 
-        db.run("CREATE TABLE USERS(ID INT PRIMARY KEY NOT NULL,USERNAME TEXT NOT NULL,PASSWORD TEXT NOT NULL,PSALT TEXT NOT NULL,OTPKEY TEXT,T0 LONG);");
+        db.run("CREATE TABLE USERS(ID INT PRIMARY KEY NOT NULL,USERNAME TEXT NOT NULL,"
+                +"PASSWORD TEXT NOT NULL,PSALT TEXT NOT NULL,OTPKEY TEXT,T0 LONG,LH TEXT,LH_ITER LONG,LH_SECRET TEXT);");
 
         addUser(db, 'user1', 'foobar',
             addUser.bind(undefined, db, 'user2', 'password1',
