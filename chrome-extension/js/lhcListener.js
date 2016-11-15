@@ -23,6 +23,10 @@ function genHash(seed,i){
  * and not introduce race conditions.
  */
 var namedListener = function(name){
+  // Sanitize eval input!!
+  if(!name.match('^[a-z0-9\-]+$'))
+    throw "Invalid domain name!";
+
   return new Function(
     "return function " + name + `(details){
       if(lhhIter <= 1){
