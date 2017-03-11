@@ -5,7 +5,8 @@ const express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     helmet = require('helmet'),
-    process = require('process');
+    process = require('process'),
+    pug = require('pug');
 
 var login = require('./routes/login');
 var register = require('./routes/register');
@@ -14,7 +15,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
