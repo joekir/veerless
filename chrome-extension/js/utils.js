@@ -1,6 +1,7 @@
 var getCurrentIP = function(callback){
   chrome.tabs.query({
-    "active": true
+    "active": true,
+    "currentWindow" : true
   }, tabs => {
     var currentUrl = tabs.filter(x => x.selected === true)[0].url;
     host = new URL(currentUrl).hostname;
