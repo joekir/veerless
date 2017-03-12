@@ -36,7 +36,6 @@ var initRule = {
 };
 
 // NOTE - to parameterize these, they must be functions, otherwise the values will not be updated!
-
 function failRule () {
   return {
     id : "fail",
@@ -72,25 +71,26 @@ function successRule () {
   };
 }
 
-// used to stop a ton of dupe rules being set.
-var set = false;
-
 if (!chrome.declarativeWebRequest.onMessage.hasListener()){
   console.log("adding onMessage listener");
 
   chrome.declarativeWebRequest.onMessage.addListener(details => {
-    if (!set && details.url != '' && details.message === stage2 ){
+    if (details.url != '' && details.message === stage2 ){
       console.log("%s from [%s]",details.message,details.url);
-      //url = (new URL(details.url)).origin
+      
       url = details.url;
       console.log("Initialized url to [%s]",url);
-      set = true;
 
-      updateOTP( () => {
+      updateOTP(() => {
         console.log("otp : %s",otp);
         chrome.declarativeWebRequest.onRequest.removeRules(["init"], () => {
-          chrome.declarativeWebRequest.onRequest.addRules([successRule(),failRule()], () => {
-            console.log("Now listening for 'X-Veerless-Response'");
+          // Currently the rules aren't parameteriezed with the otp
+          // It will error if you try to add an already existing rule, that has not been consumed
+          // hence we aggressively clean it
+          chrome.declarativeWebRequest.onRequest.removeRules(['success','fail'], () => {
+            chrome.declarativeWebRequest.onRequest.addRules([successRule(),failRule()], () => {
+              console.log("Now expecting a 'X-Veerless-Response' of %s from %s",otp,url);
+            });
           });
         })
       });
@@ -117,14 +117,12 @@ if (!chrome.declarativeWebRequest.onMessage.hasListener()){
         });
       }
 
-      set = false;
-      chrome.declarativeWebRequest.onRequest.removeRules(["success","fail"], () => {
-        chrome.declarativeWebRequest.onRequest.addRules([initRule], () => {
-          console.log("Reset to listen for 'X-Veerless-Init'");
-        });
-      });
+      console.log("Clearing all rules.");
+      chrome.declarativeWebRequest.onRequest.removeRules();
+      console.log("Reset to listen for 'X-Veerless-Init'");
+      chrome.declarativeWebRequest.onRequest.addRules([initRule]);
     }
-    else {/* don't care */}
+    else { console.log("Unexpected error"); }
   });
 }
 
