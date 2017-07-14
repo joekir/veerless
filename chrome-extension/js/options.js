@@ -4,8 +4,8 @@
 */
 
 function save_options() {
-  var serverSecret = document.getElementById('serverSecret').value;
-  var t0 = document.getElementById('t0').value;
+  var serverSecret = document.getElementById('serverSecret').value.trim();
+  var t0 = document.getElementById('t0').value.trim();
   chrome.storage.sync.set({
     serverSecret: serverSecret,
     t0: t0
